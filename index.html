@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détection d'Objets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input {
+            margin: 10px 0;
+        }
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Uploader une Image pour la Détection</h2>
+    <input type="file" id="imageUpload" accept="image/*">
+    <button onclick="uploadImage()">Analyser</button>
+    
+    <h3>Résultat :</h3>
+    <img id="resultImage" style="display:none;">
+
+    <script>
+        function uploadImage() {
+            let fileInput = document.getElementById("imageUpload");
+            if (!fileInput.files.length) {
+                alert("Veuillez sélectionner une image.");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            fetch("/detect", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                let imageUrl = URL.createObjectURL(blob);
+                document.getElementById("resultImage").src = imageUrl;
+                document.getElementById("resultImage").style.display = "block";
+            })
+            .catch(error => console.error("Erreur:", error));
+        }
+    </script>
+</body>
+</html>
